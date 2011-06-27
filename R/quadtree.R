@@ -1,4 +1,4 @@
-setClass("SearchTree", representation = list(ref = "externalptr", numNodes = "integer", dataNodes = "integer", maxDepth = "integer", maxBucket = "integer", points = "integer"))
+setClass("SearchTree", representation = list(ref = "externalptr", numNodes = "integer", dataNodes = "integer", maxDepth = "integer", maxBucket = "integer", points = "integer", "VIRTUAL"))
 setClass("QuadTree", contains="SearchTree")
 
 setGeneric("getPointsInRect",
