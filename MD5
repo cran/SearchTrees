@@ -1,0 +1,13 @@
+0c6d75c28779adc9f0dbb044d27926df *DESCRIPTION
+801abd06eda3aaaa24cb70778ee04c1a *NAMESPACE
+cf68792b8e66f647a72f92652e82bd95 *R/QuadTree-internal.R
+a34111affe7509710714280ffce95f72 *R/kdtree.R
+0dfaf5eb0a10f20ad48ba18150d9ac34 *R/quadtree.R
+0e11c215ab6e1d81c05328b544dc9224 *man/QuadTree-class.Rd
+67f880767a0e8ebcd4c5293e43fd9f69 *man/SearchTree-class.Rd
+65832e9f88e2288ae60ae2a6d1c8a035 *man/createIndex.Rd
+36efbd93dda81fe45dffdfc0da95bafd *man/findKNN.Rd
+fd632a16bb7cb7b91f47c703ac7ac2b9 *man/getPointsInRect.Rd
+4c0c3cfacaae39430b8dbec01bfb7acb *src/Rsearchtrees.h
+ee49ad112c03a35242a2dce8bd23b408 *src/kdtree.c
+4f45bb620ed9744d850940aa316c8460 *src/quadtree.c
