@@ -342,7 +342,8 @@ R_Find_Neighbors_Pts(SEXP Rtree, SEXP Rnewx, SEXP Rnewy, SEXP Rk)
   qtree2_t *curnode;
   int k = INTEGER( Rk ) [ 0 ];
   int len = LENGTH( Rnewx );
-  double dists[ len*k ];
+  //double dists[ len*k ];
+  double *dists = calloc(len*k, sizeof(double));
   point_t **chosen = calloc( len * k , sizeof(point_t*));
   point_t *newpt;
   point_t *oldpt;
@@ -367,7 +368,8 @@ R_Find_Neighbors_Pts(SEXP Rtree, SEXP Rnewx, SEXP Rnewy, SEXP Rk)
 	    {
 	      tmpdist = eucl_dist_pts(newpt, (point_t *) curnode->data[i]);
 	      oldpt = (point_t *) curnode -> data [ i ] ;
-	      insert_dist( (double *) &dists, tmpdist, chosen, oldpt, k, l*k);
+	      //insert_dist( (double *) &dists, tmpdist, chosen, oldpt, k, l*k);
+	      insert_dist( dists, tmpdist, chosen, oldpt, k, l*k);
 	      initcnt ++;
 	    }
 	}
@@ -381,7 +383,8 @@ R_Find_Neighbors_Pts(SEXP Rtree, SEXP Rnewx, SEXP Rnewy, SEXP Rk)
 	  pos = curnode -> pos;
 	  curnode = curnode -> parent;
 	  curmaxdist= dists[ tmpind ];
-	  Harvest_KNN_Pts(curnode, pos, newpt -> x - curmaxdist, newpt -> x + curmaxdist, newpt -> y - curmaxdist, newpt -> y + curmaxdist, chosen, (double *) &dists, newpt, k, l*k);
+	  //Harvest_KNN_Pts(curnode, pos, newpt -> x - curmaxdist, newpt -> x + curmaxdist, newpt -> y - curmaxdist, newpt -> y + curmaxdist, chosen, (double *) &dists, newpt, k, l*k);
+	  Harvest_KNN_Pts(curnode, pos, newpt -> x - curmaxdist, newpt -> x + curmaxdist, newpt -> y - curmaxdist, newpt -> y + curmaxdist, chosen, dists, newpt, k, l*k);
 	}	  
       free(newpt);
     }
@@ -393,6 +396,7 @@ R_Find_Neighbors_Pts(SEXP Rtree, SEXP Rnewx, SEXP Rnewy, SEXP Rk)
   for (int i = 0; i < len * k; i++)
     INTEGER(ans) [ i ] = chosen[i]->index + 1; //+1 because it we start he counting at 0?
   free(chosen);
+  free(dists);
   UNPROTECT(1);
   return ans;
 }
