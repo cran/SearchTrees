@@ -9,7 +9,7 @@ A virtual class representing a search tree for storing geometric points
 in a manner designed for efficient lookup. 
 }
 \section{Objects from the Class}{
-This is a virtual class so objects of class SearchTree cannot be created directly.No methods defined with class "SearchTree" in the signature.
+  This is a virtual class so objects of class SearchTree cannot be created directly.No methods defined with class "SearchTree" in the signature.
 }
 \section{Slots}{
   \describe{
@@ -23,23 +23,21 @@ This is a virtual class so objects of class SearchTree cannot be created directl
       depth of the tree}
     \item{\code{maxBucket}:}{Object of class \code{"integer"} Maximum
       number of data points stored in a single node}
-    \item{\code{points}:}{Object of class \code{"integer"} Number of
-      data points stored in the tree.}
+    \item{\code{totalData}:}{Object of class \code{"integer"} Number of
+      data objects stored in the tree.}
+    \item{\code{dataType}:}{Object of class \code{"character"} Indicates
+      type of data stored in the tree.
+    }
   }
 }
 \section{Methods}{
-\code{findKNN}, \code{getPointsInRect}
-}
-\references{
-%%  ~~put references to the literature/web site here~~
+  \code{knnLookup}, \code{rectLookup}
 }
 \author{
-Gabriel Becker
+  Gabriel Becker
 }
 \seealso{
-  \code{\linkS4class{QuadTree}} \code{\link{createIndex}}
-}
-\examples{
+  \code{\linkS4class{QuadTree}} \code{\link{createTree}}
 }
 \keyword{classes}
 \keyword{lookup}

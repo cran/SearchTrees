@@ -2,7 +2,6 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{QuadTree-class}
-
 \title{Class \code{"QuadTree"}}
 \description{
 A class representing a Quad Tree object for storing 2 dimensional points
@@ -24,8 +23,11 @@ Objects can be created by calls of the form \code{new("QuadTree", ...)}.
       depth of the tree.}
     \item{\code{maxBucket}:}{Object of class \code{"integer"} Maximum
       number of data points which are stored at a single node}
-    \item{\code{points}:}{Object of class \code{"integer"} Number of
-      points stored in the tree }
+    \item{\code{totalData}:}{Object of class \code{"integer"} Number of
+      objects stored in the tree }
+    \item{\code{dataType}:}{Object of class \code{"character"} Indicates
+      type of data stored in the tree.
+    }
   }
 }
 \section{Extends}{
@@ -33,12 +35,9 @@ Class \code{"\linkS4class{SearchTree}"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{findKNN}{\code{signature(tree = "QuadTree")}: ... }
-    \item{getPointsInRect}{\code{signature(tree = "QuadTree")}: ... }
-	 }
-}
-\references{
-%%  ~~put references to the literature/web site here~~
+    \item{knnLookup}{\code{signature(tree = "QuadTree")}: ... }
+    \item{rectLookup}{\code{signature(tree = "QuadTree")}: ... }
+  }
 }
 \author{
 Gabriel Becker
@@ -46,13 +45,10 @@ Gabriel Becker
 \note{
 When using createIndex to create a quadTree, only two columns of the
 matrix/data.frame passed to the function will be used to create the
-tree. See the columns argument in \code{\link{createIndex}}
+tree. See the columns argument in \code{\link{createTree}}
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-  \code{\link{createIndex}}
+  \code{\link{createTree}}
 }
 \examples{
 showClass("QuadTree")
