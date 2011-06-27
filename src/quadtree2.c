@@ -39,7 +39,7 @@ int points_equal(point_t *pt1, point_t *pt2)
   return ret;
 }
 SEXP
-R_Build_Quadtree_Rect(SEXP Rx1, SEXP Rx2, SEXP Ry1, SEXP Ry2, SEXP RxMax, SEXP RxMin, SEXP RyMax, SEXP RyMin, SEXP RmaxDepth)
+R_Build_Quadtree_Rect(SEXP Rx1, SEXP Ry1, SEXP Rx2, SEXP Ry2, SEXP RxMax, SEXP RxMin, SEXP RyMax, SEXP RyMin, SEXP RmaxDepth)
 {
   double *x1 = REAL(Rx1);
   double *x2 = REAL(Rx2);
@@ -66,7 +66,7 @@ R_Build_Quadtree_Rect(SEXP Rx1, SEXP Rx2, SEXP Ry1, SEXP Ry2, SEXP RxMax, SEXP R
   SEXP klass, ans, ptr, ptr2;
   int *attr = calloc(4, sizeof(int));
   get_tree_attributes(tree, attr);
-PROTECT( klass = MAKE_CLASS( "QuadTree" ) );
+  PROTECT( klass = MAKE_CLASS( "QuadTree" ) );
   PROTECT( ans = NEW( klass ) );
   PROTECT( ptr = R_MakeExternalPtr( tree ,
 				    Rf_install( "QuadTree" ),
@@ -661,20 +661,11 @@ R_Rectangle_Lookup(SEXP Rtree, SEXP Rxlims, SEXP Rylims)
   down = ylim[0];
   up = ylim[1];
   int size = 100;
-  int **found = calloc(size, sizeof(int*));
+  int structsize = get_struct_size(tree->datatype);
+  int *found = malloc(size*structsize);
   int pos = 0;
-  /*
-  switch(tree->datatype)
-    {
-    case 1:
-      Rectangle_Pt_Lookup(tree, left, right, down, up, found, &pos, &size);
-      break;
-    case 2:
-      Rectangle_Rect_Lookup(tree, left, right, down, up, found, &pos, &size);
-      break;
-    }
-  */
-  Rectangle_Lookup(tree, left, right, down, up, found, &pos, &size, tree->datatype);
+  //fprintf(stderr, "\n"); fflush(stderr);
+  Rectangle_Lookup(tree, left, right, down, up, &found, &pos, &size, tree->datatype);
   SEXP ans;
   PROTECT( ans = NEW_INTEGER( pos ) );
   for (int i = 0; i < pos; i ++)
@@ -682,10 +673,10 @@ R_Rectangle_Lookup(SEXP Rtree, SEXP Rxlims, SEXP Rylims)
       switch(tree->datatype)
 	{
 	case 1:
-	  INTEGER( ans )[ i ] = ( (point_t *)found[i] ) ->index + 1; 
+	  INTEGER( ans )[ i ] = ( (point_t *)found)[i].index + 1; 
 	  break;
 	case 2:
-	  INTEGER( ans )[ i ] = ( (rect_t *)found[i] ) ->index + 1; 
+	  INTEGER( ans )[ i ] = ( (rect_t *)found)[i].index + 1; 
 	  break;
 	}
     }
@@ -694,9 +685,24 @@ R_Rectangle_Lookup(SEXP Rtree, SEXP Rxlims, SEXP Rylims)
   return ans;
 }
 
+int get_struct_size(char type)
+{
+  int ret = 0;
+  switch(type)
+    {
+    case 1:
+      ret = sizeof(point_t);
+      break;
+    case 2:
+      ret = sizeof(rect_t);
+      break;
+    }
+  return ret;
+}
 
 void Rectangle_Lookup(qtree2_t *tree, double left, double right, double down, double up, int **found, int *pos, int *cursize, char type)
 {
+  
 
   void *cur;
   if(tree -> numdata)
@@ -706,17 +712,27 @@ void Rectangle_Lookup(qtree2_t *tree, double left, double right, double down, do
 	  cur=  tree->data[i];
 	  if(overlap(left, right, down, up, cur, type))
 	    {
-	      if( *pos >= *cursize -1)
-		found = Grow_ReturnArray(found, cursize);
-	      
-	      found[*pos] =(int *) cur;
+	      if( *pos >= *cursize)
+		{
+		  //fprintf(stderr, "\nOld Address: %lx", found);fflush(stderr);
+		  Grow_ReturnArray(found, cursize, type);
+		  //fprintf(stderr, "\nNew Address: %lx", found);fflush(stderr);
+		}
+	      switch(type)
+		{
+		case 1:
+		  ((point_t*)*found)[*pos] =*((point_t *) cur);
+		  break;
+		case 2:
+		  ((rect_t*)*found)[*pos] = *((rect_t *) cur);
+		}
 	      *pos += 1;
 	      
 	      
 	    }
 	}
     }
-    if (tree -> uleft != NULL)
+  if (tree -> uleft != NULL)
     {
       qtree2_t *tmptree = tree -> uleft;
       if (CheckBounds(tmptree, left, right, down, up))
@@ -767,116 +783,26 @@ int overlap(double left, double right, double down, double up, void *obj, char t
   return toret;
 }
       
-
-/*
-void Rectangle_Rect_Lookup(qtree2_t *tree, double left, double right, double down, double up, int **found, int *pos, int *cursize)
+ void Grow_ReturnArray(int **found, int *cursize, char type)
 {
-  point_t *pt;
-  if(tree -> numdata)
-    {
-      for(int i = 0; i < tree -> numdata; i++)
-	{
-	  pt= (point_t *) tree->data[i];
-	  if(pt->x >= left && pt->x <= right && pt-> y >= down && pt->y <= up)
-	    {
-	      if( *pos >= *cursize -1)
-		found = Grow_ReturnArray(found, cursize);
-	      
-	      found[*pos] =(int *) pt;
-	      *pos += 1;
-	      
-
-	    }
-	}
-    } else if (tree -> uleft != NULL)
-    {
-      qtree2_t *tmptree = tree -> uleft;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree -> uright;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree ->lleft;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree -> lright;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      
-
-    }
-  
-
-}
-*/
-void Rectangle_Pt_Lookup(qtree2_t *tree, double left, double right, double down, double up, int **found, int *pos, int *cursize)
-{
-  point_t *pt;
-  if(tree -> numdata)
-    {
-      for(int i = 0; i < tree -> numdata; i++)
-	{
-	  pt= (point_t *) tree->data[i];
-	  if(pt->x >= left && pt->x <= right && pt-> y >= down && pt->y <= up)
-	    {
-	      if( *pos >= *cursize -1)
-		found = Grow_ReturnArray(found, cursize);
-	      
-	      found[*pos] =(int *) pt;
-	      *pos += 1;
-	      
-
-	    }
-	}
-    } else if (tree -> uleft != NULL)
-    {
-      qtree2_t *tmptree = tree -> uleft;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree -> uright;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree ->lleft;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      tmptree = tree -> lright;
-      if (CheckBounds(tmptree, left, right, down, up))
-	{
-	  Rectangle_Pt_Lookup(tmptree, left, right, down, up, found, pos, cursize);
-	}
-      
-
-    }
-}
-
-int **Grow_ReturnArray(int **found, int *cursize)
-{
-  int **toret = NULL;
+  int *toret = NULL;
   int oldsize = *cursize;
   int newsize;
-  if(oldsize < 10000)
+  if(oldsize < 1000)
     newsize = oldsize *2;
   else
-    newsize = 1.1*newsize;
-  *cursize = newsize;
-  toret = realloc( found, newsize * sizeof(int));
-  //toret = memcpy(topret, ar, oldsize * sizeof(int));
+    newsize = 1.1*oldsize;
   
-  return toret;
+  //toret = realloc( found, newsize * sizeof(int*));
+  
+  int structsize = get_struct_size(type);
+  toret = realloc(*found, newsize*structsize);  
+  *cursize = newsize;
+  //fprintf(stderr, "Grow_ReturnArray successful. New size: %d\n", newsize);fflush(stderr);
+//toret = memcpy(topret, ar, oldsize * sizeof(int));
+  *found = toret;
+  //return toret;
+  return;
 }
 
 int 

@@ -1,7 +1,7 @@
 Package: SearchTrees
 Type: Package
 Title: Spatial Search Trees
-Version: 0.5
+Version: 0.5.1
 Date: 2011-06-27
 Author: Gabriel Becker
 Maintainer: Gabriel Becker <gmbecker@ucdavis.edu>
@@ -12,6 +12,6 @@ Description: This package provides an implementation of the QuadTree
 Depends: methods
 License: LGPL
 LazyLoad: yes
-Packaged: 2012-01-30 20:24:18 UTC; gmbecker
+Packaged: 2012-02-23 23:48:39 UTC; gmbecker
 Repository: CRAN
-Date/Publication: 2012-01-30 21:30:54
+Date/Publication: 2012-02-24 06:10:15

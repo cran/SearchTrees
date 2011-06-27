@@ -8,7 +8,7 @@ Create a search tree from the supplied data for use
   in during future lookups.
 }
 \usage{
-createTree(data, treeType = "quad", dataType = "point", columns = c(1, 2), ...)
+createTree(data, treeType = "quad", dataType = "point", columns = if (dataType=="point") 1:2 else 1:4, ...)
 }
 \arguments{
   \item{data}{
