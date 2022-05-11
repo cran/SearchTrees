@@ -844,3 +844,21 @@ void get_tree_attributes(qtree2_t *tree, int *curattr)
      
   return; 
 }
+
+static const R_CallMethodDef callMethods[]  = {
+  {"Build_Quadtree_Rect", (DL_FUNC) &R_Build_Quadtree_Rect, 9},
+  {"Build_Quadtree_Pt", (DL_FUNC) &R_Build_Quadtree_Pt, 7},
+  {"Find_Neighbors_Pts", (DL_FUNC) &R_Find_Neighbors_Pts, 4},
+  {"free_quad_tree", (DL_FUNC) &R_free_quad_tree, 1},
+  {"Find_MaxDepth", (DL_FUNC) &R_Find_MaxDepth, 1},
+  {"Rectangle_Lookup", (DL_FUNC) &R_Rectangle_Lookup, 3},
+  {NULL, NULL, 0}
+};
+
+void
+R_init_SearchTrees(DllInfo *info)
+{
+   R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+   R_useDynamicSymbols(info, FALSE);
+   R_forceSymbols(info, TRUE);
+}
