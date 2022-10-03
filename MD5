@@ -1,4 +1,4 @@
-6f3dca21a76c24373a3e128a3bdcef60 *DESCRIPTION
+a9a91ef1205582ecccd4cc95db9a539c *DESCRIPTION
 5810f6a4ad3d36f1c398e66c5842f37c *NAMESPACE
 5db447a492971b6736354528bf785d7e *R/quadtree2.R
 ff7606b8ef7fd02823ee13008da9bc0c *man/QuadTree-class.Rd
@@ -9,4 +9,4 @@ f88a3047d31d589a172b1208448fffda *man/createTree.Rd
 a2a6e7ae77172cfc8a2abb8b3593ac3c *man/rectLookup-methods.Rd
 60c6e016fe1cefb8ef809b47bdac2a6f *man/rectLookup.Rd
 4909453eba609b95eab6eeb38ec4bd94 *src/Rsearchtrees2.h
-c31d7c935cac1032ed6139673ddcb6a9 *src/quadtree2.c
+d4fe31825bc99a909aed69abdcb9509a *src/quadtree2.c
